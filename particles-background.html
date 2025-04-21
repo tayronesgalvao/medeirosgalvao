@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -14,13 +15,10 @@
         background: transparent;
       }
       #particles-js {
-        position: fixed;
-        top: 0;
-        left: 0;
+        position: absolute;
         width: 100%;
         height: 100%;
-        z-index: 1;
-        pointer-events: auto;
+        z-index: -1;
       }
     </style>
   </head>
@@ -30,57 +28,29 @@
     <script>
       particlesJS('particles-js', {
         particles: {
-          number: {
-            value: 130,
-            density: {
-              enable: true,
-              value_area: 700
-            }
-          },
-          color: { value: "#00ff00" }, // Partículas verdes
+          number: { value: 80 },
+          color: { value: "#ffffff" },
           shape: { type: "circle" },
           opacity: { value: 0.5 },
-          size: { value: 2.5 },
+          size: { value: 3 },
           line_linked: {
             enable: true,
-            distance: 90,
-            color: "#ffffff", // Linhas brancas
-            opacity: 0.6,
+            distance: 150,
+            color: "#ffffff",
+            opacity: 0.4,
             width: 1
           },
-          move: {
-            enable: true,
-            speed: 1.8,
-            direction: "none",
-            random: false,
-            straight: false,
-            out_mode: "out",
-            bounce: false
-          }
+          move: { enable: true, speed: 3 }
         },
         interactivity: {
-          detect_on: "window",
+          detect_on: "canvas",
           events: {
-            onhover: {
-              enable: true,
-              mode: "grab"
-            },
-            onclick: {
-              enable: true,
-              mode: "push"
-            },
-            resize: true
+            onhover: { enable: true, mode: "repulse" },
+            onclick: { enable: true, mode: "push" }
           },
           modes: {
-            grab: {
-              distance: 140,
-              line_linked: {
-                opacity: 1
-              }
-            },
-            push: {
-              particles_nb: 4
-            }
+            repulse: { distance: 100 },
+            push: { particles_nb: 4 }
           }
         },
         retina_detect: true
