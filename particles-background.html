@@ -40,11 +40,48 @@
           size: { value: 2.5 },
           line_linked: {
             enable: true,
-            distance: 90,
-            color: "#ffffff",
+            distance: 90, // Linhas mais próximas = mais interligação
+            color: "#ffffff", // Linhas brancas
             opacity: 0.6,
             width: 1
           },
           move: {
             enable: true,
             speed: 1.8,
+            direction: "none",
+            random: false,
+            straight: false,
+            out_mode: "out",
+            bounce: false
+          }
+        },
+        interactivity: {
+          detect_on: "canvas",
+          events: {
+            onhover: {
+              enable: true,
+              mode: "grab"
+            },
+            onclick: {
+              enable: true,
+              mode: "push"
+            },
+            resize: true
+          },
+          modes: {
+            grab: {
+              distance: 140,
+              line_linked: {
+                opacity: 1
+              }
+            },
+            push: {
+              particles_nb: 4
+            }
+          }
+        },
+        retina_detect: true
+      });
+    </script>
+  </body>
+</html>
