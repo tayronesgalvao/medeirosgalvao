@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ecossistema MGC</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #00332f;
+      overflow: hidden;
+      font-family: sans-serif;
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 0;
+    }
+    .orb {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #00332f;
+      cursor: pointer;
+      box-shadow: 0 0 10px #00ff88;
+      transition: transform 0.3s ease;
+    }
+    .orb:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px #00ff88;
+    }
+    #center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 150px;
+      height: 150px;
+      margin-left: -75px;
+      margin-top: -75px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 18px;
+      color: #00332f;
+      z-index: 2;
+      box-shadow: 0 0 20px #00ff88;
+    }
+  </style>
+</head>
+<body>
+  <div id="center">Medeiros Galvão</div>
+  <div class="orb" style="top: 20%; left: 50%;">Transsupply</div>
+  <div class="orb" style="top: 70%; left: 30%;">MRO Supply</div>
+  <div class="orb" style="top: 30%; left: 20%;">Serviços</div>
+  <div class="orb" style="top: 65%; left: 65%;">Petróleo</div>
+  <canvas id="orbitCanvas"></canvas>
+  <script>
+    const canvas = document.getElementById('orbitCanvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+
+    function drawOrbit(radius) {
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.strokeStyle = '#00ff88';
+      ctx.setLineDash([5, 5]);
+      ctx.stroke();
+    }
+
+    function drawOrbits() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawOrbit(200);
+      drawOrbit(300);
+      drawOrbit(400);
+    }
+
+    drawOrbits();
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      drawOrbits();
+    });
+  </script>
+</body>
+</html>
