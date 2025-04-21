@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -28,29 +27,57 @@
     <script>
       particlesJS('particles-js', {
         particles: {
-          number: { value: 80 },
+          number: {
+            value: 120,      // Mais partículas
+            density: {
+              enable: true,
+              value_area: 800
+            }
+          },
           color: { value: "#ffffff" },
           shape: { type: "circle" },
           opacity: { value: 0.5 },
           size: { value: 3 },
           line_linked: {
             enable: true,
-            distance: 150,
+            distance: 120,  // Linhas mais próximas
             color: "#ffffff",
             opacity: 0.4,
             width: 1
           },
-          move: { enable: true, speed: 3 }
+          move: {
+            enable: true,
+            speed: 2,
+            direction: "none",
+            random: false,
+            straight: false,
+            out_mode: "out",
+            bounce: false
+          }
         },
         interactivity: {
-          detect_on: "canvas",
+          detect_on: "canvas", // Wix aceita melhor "canvas" do que "window"
           events: {
-            onhover: { enable: true, mode: "repulse" },
-            onclick: { enable: true, mode: "push" }
+            onhover: {
+              enable: true,
+              mode: "grab" // Interação com o mouse visível
+            },
+            onclick: {
+              enable: true,
+              mode: "push"
+            },
+            resize: true
           },
           modes: {
-            repulse: { distance: 100 },
-            push: { particles_nb: 4 }
+            grab: {
+              distance: 140,
+              line_linked: {
+                opacity: 1
+              }
+            },
+            push: {
+              particles_nb: 4
+            }
           }
         },
         retina_detect: true
