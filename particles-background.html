@@ -14,10 +14,13 @@
         background: transparent;
       }
       #particles-js {
-        position: absolute;
+        position: fixed;
+        top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
-        z-index: -1;
+        z-index: 1;
+        pointer-events: auto;
       }
     </style>
   </head>
@@ -27,28 +30,32 @@
     <script>
       particlesJS('particles-js', {
         particles: {
-          number: { value: 80 },
-          color: { value: "#ffffff" },
+          number: {
+            value: 130,
+            density: {
+              enable: true,
+              value_area: 700
+            }
+          },
+          color: { value: "#00ff00" }, // Partículas verdes
           shape: { type: "circle" },
           opacity: { value: 0.5 },
-          size: { value: 3 },
+          size: { value: 2.5 },
           line_linked: {
             enable: true,
-            distance: 150,
-            color: "#ffffff",
-            opacity: 0.4,
+            distance: 90,
+            color: "#ffffff", // Linhas brancas
+            opacity: 0.6,
             width: 1
           },
           move: {
             enable: true,
-            speed: 2,
+            speed: 1.8,
             direction: "none",
             random: false,
             straight: false,
             out_mode: "out",
-            attract: {
-              enable: false
-            }
+            bounce: false
           }
         },
         interactivity: {
@@ -71,22 +78,8 @@
                 opacity: 1
               }
             },
-            bubble: {
-              distance: 200,
-              size: 6,
-              duration: 2,
-              opacity: 0.8,
-              speed: 3
-            },
-            repulse: {
-              distance: 100,
-              duration: 0.4
-            },
             push: {
               particles_nb: 4
-            },
-            remove: {
-              particles_nb: 2
             }
           }
         },
