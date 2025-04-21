@@ -1,57 +1,50 @@
-particlesJS('particles-js', {
-  particles: {
-    number: {
-      value: 120,
-      density: {
-        enable: true,
-        value_area: 800
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Particles Background</title>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+    <style>
+      body, html {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        height: 100%;
+        width: 100%;
+        background: transparent;
       }
-    },
-    color: { value: "#00ff00" }, // Partículas verdes
-    shape: { type: "circle" },
-    opacity: { value: 0.5 },
-    size: { value: 3 },
-    line_linked: {
-      enable: true,
-      distance: 100, // Linhas mais próximas
-      color: "#ffffff", // Linhas brancas
-      opacity: 0.6,
-      width: 1
-    },
-    move: {
-      enable: true,
-      speed: 2,
-      direction: "none",
-      random: false,
-      straight: false,
-      out_mode: "out",
-      bounce: false
-    }
-  },
-  interactivity: {
-    detect_on: "canvas",
-    events: {
-      onhover: {
-        enable: true,
-        mode: "grab"
-      },
-      onclick: {
-        enable: true,
-        mode: "push"
-      },
-      resize: true
-    },
-    modes: {
-      grab: {
-        distance: 140,
-        line_linked: {
-          opacity: 1
-        }
-      },
-      push: {
-        particles_nb: 4
+      #particles-js {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
       }
-    }
-  },
-  retina_detect: true
-});
+    </style>
+  </head>
+  <body>
+    <div id="particles-js"></div>
+
+    <script>
+      particlesJS('particles-js', {
+        particles: {
+          number: {
+            value: 130,
+            density: {
+              enable: true,
+              value_area: 700
+            }
+          },
+          color: { value: "#00ff00" }, // Partículas verdes
+          shape: { type: "circle" },
+          opacity: { value: 0.5 },
+          size: { value: 2.5 },
+          line_linked: {
+            enable: true,
+            distance: 90,
+            color: "#ffffff",
+            opacity: 0.6,
+            width: 1
+          },
+          move: {
+            enable: true,
+            speed: 1.8,
