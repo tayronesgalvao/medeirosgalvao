@@ -28,26 +28,26 @@
       particlesJS('particles-js', {
         particles: {
           number: {
-            value: 120,      // Mais partículas
+            value: 130,
             density: {
               enable: true,
-              value_area: 800
+              value_area: 700
             }
           },
-          color: { value: "#ffffff" },
+          color: { value: "#00ff00" }, // Partículas verdes
           shape: { type: "circle" },
           opacity: { value: 0.5 },
-          size: { value: 3 },
+          size: { value: 2.5 },
           line_linked: {
             enable: true,
-            distance: 120,  // Linhas mais próximas
-            color: "#ffffff",
-            opacity: 0.4,
+            distance: 90, // Linhas mais próximas = mais interligação
+            color: "#ffffff", // Linhas brancas
+            opacity: 0.6,
             width: 1
           },
           move: {
             enable: true,
-            speed: 2,
+            speed: 1.8,
             direction: "none",
             random: false,
             straight: false,
@@ -56,11 +56,11 @@
           }
         },
         interactivity: {
-          detect_on: "canvas", // Wix aceita melhor "canvas" do que "window"
+          detect_on: "canvas",
           events: {
             onhover: {
               enable: true,
-              mode: "grab" // Interação com o mouse visível
+              mode: "grab"
             },
             onclick: {
               enable: true,
