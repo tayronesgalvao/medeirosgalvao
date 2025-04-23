@@ -4,23 +4,17 @@
   <meta charset="UTF-8" />
   <title>Ecossistema Orbital com Partículas Interativas</title>
   <style>
-    html, body {
+    body {
       margin: 0;
       padding: 0;
+      background: #000a12;
       overflow: hidden;
-      background: transparent;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
     }
     canvas {
-      display: block;
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      top: 0;
+      left: 0;
+      display: block;
     }
   </style>
 </head>
@@ -31,17 +25,13 @@
     const canvas = document.getElementById("orbitCanvas");
     const ctx = canvas.getContext("2d");
 
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      centerX = canvas.width / 2;
-      centerY = canvas.height / 2;
-    }
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+    const centerX = width / 2;
+    const centerY = height / 2;
 
-    let centerX, centerY;
-    resizeCanvas();
+    const particleRadiusLimit = 400; // partículas dentro dessa distância do centro
 
-    const particleRadiusLimit = 400;
     const orbits = [100, 150, 200, 250, 300, 350];
     const particles = [];
 
@@ -172,11 +162,13 @@
       ctx.setLineDash([2, 6]);
       ctx.strokeStyle = "#00ff8888";
       planets.forEach(a => {
+        // ligação com o centro
         ctx.beginPath();
         ctx.moveTo(a.x, a.y);
         ctx.lineTo(centerX, centerY);
         ctx.stroke();
 
+        // ligação com outros planetas
         planets.forEach(b => {
           if (a !== b) {
             ctx.beginPath();
@@ -191,7 +183,7 @@
     let mouseX = centerX, mouseY = centerY;
 
     function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, width, height);
 
       drawParticles(mouseX, mouseY);
 
@@ -214,7 +206,8 @@
     draw();
 
     window.addEventListener("resize", () => {
-      resizeCanvas();
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
     });
 
     canvas.addEventListener("mousemove", e => {
