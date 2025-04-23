@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Ecossistema 3D MGC Disruptivo</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: transparent;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/controls/OrbitControls.js"></script>
+  <script>
+    const scene = new THREE.Scene();
+
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+    camera.position.set(0, 200, 400);
+
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.1;
+    controls.rotateSpeed = 0.4;
+
+    const centerGeo = new THREE.SphereGeometry(20, 32, 32);
+    const centerMat = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
+    const center = new THREE.Mesh(centerGeo, centerMat);
+    scene.add(center);
+
+    const orbitRadius = [80, 120, 160, 200, 240, 280];
+    const planetGeo = new THREE.SphereGeometry(10, 16, 16);
+    const planetMat = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true });
+
+    const planets = [];
+    const lines = [];
+
+    orbitRadius.forEach((radius, i) => {
+      const planet = new THREE.Mesh(planetGeo, planetMat.clone());
+      planet.userData = {
+        angle: i * Math.PI * 2 / orbitRadius.length,
+        speed: 0.01 + i * 0.002,
+        radius: radius,
+        pulse: 1,
+        pulseDir: 1
+      };
+      planets.push(planet);
+      scene.add(planet);
+
+      const lineGeo = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(),
+        planet.position.clone()
+      ]);
+      const lineMat = new THREE.LineDashedMaterial({
+        color: 0x00ffaa,
+        dashSize: 2,
+        gapSize: 1
+      });
+      const line = new THREE.Line(lineGeo, lineMat);
+      line.computeLineDistances();
+      lines.push(line);
+      scene.add(line);
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+
+      planets.forEach((planet, i) => {
+        const u = planet.userData;
+        u.angle += u.speed;
+        const x = Math.cos(u.angle) * u.radius;
+        const z = Math.sin(u.angle) * u.radius;
+        planet.position.set(x, 0, z);
+
+        // pulsa
+        if (u.pulse > 1.2) u.pulseDir = -1;
+        if (u.pulse < 0.8) u.pulseDir = 1;
+        u.pulse += u.pulseDir * 0.01;
+        planet.scale.set(u.pulse, u.pulse, u.pulse);
+
+        lines[i].geometry.setFromPoints([
+          new THREE.Vector3(0, 0, 0),
+          planet.position.clone()
+        ]);
+        lines[i].computeLineDistances();
+      });
+
+      // interconexões
+      for (let i = 0; i < planets.length; i++) {
+        for (let j = i + 1; j < planets.length; j++) {
+          const geom = new THREE.BufferGeometry().setFromPoints([
+            planets[i].position,
+            planets[j].position
+          ]);
+          const mat = new THREE.LineDashedMaterial({
+            color: 0x0055ff,
+            dashSize: 1,
+            gapSize: 1
+          });
+          const line = new THREE.Line(geom, mat);
+          line.computeLineDistances();
+          scene.add(line);
+        }
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>
