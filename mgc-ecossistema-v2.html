@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Ecossistema Orbital MGC</title>
+  <title>Ecossistema Orbital MGC Futurista</title>
   <style>
     body {
       margin: 0;
@@ -34,7 +34,12 @@
       radius,
       size: 10 + (index % 2) * 4,
       hover: false,
-      moons: index % 2 === 0 ? [{ angle: 0, speed: 0.015, distance: 20 }] : []
+      moons: index % 2 === 0 ? [{ angle: 0, speed: 0.015, distance: 20 }] : [],
+      dataNodes: Array.from({ length: 4 }, (_, i) => ({
+        angle: (Math.PI / 2) * i,
+        distance: 15 + i * 10,
+        speed: 0.008 + i * 0.002
+      }))
     }));
 
     function drawOrbit(radius) {
@@ -77,16 +82,16 @@
         moon.angle += moon.speed;
       });
 
-      // dados inteligentes orbitando
-      for (let i = 0; i < 3; i++) {
-        const angleOffset = planet.angle + i * Math.PI * 2 / 3;
-        const dx = centerX + planet.radius * Math.cos(angleOffset);
-        const dy = centerY + planet.radius * Math.sin(angleOffset);
+      // pontos flutuantes como "dados"
+      planet.dataNodes.forEach(node => {
+        const dx = x + node.distance * Math.cos(node.angle);
+        const dy = y + node.distance * Math.sin(node.angle);
         ctx.beginPath();
-        ctx.arc(dx, dy, 2, 0, 2 * Math.PI);
+        ctx.arc(dx, dy, 1.5, 0, 2 * Math.PI);
         ctx.fillStyle = "#00ffaa";
         ctx.fill();
-      }
+        node.angle += node.speed;
+      });
     }
 
     function drawNetworkLines() {
