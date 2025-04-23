@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Ecossistema Orbital MGC Futurista</title>
+  <title>Ecossistema Orbital com Partículas</title>
   <style>
     body {
       margin: 0;
@@ -11,6 +11,9 @@
       overflow: hidden;
     }
     canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
       display: block;
     }
   </style>
@@ -28,6 +31,8 @@
     const centerY = height / 2;
 
     const orbits = [100, 150, 200, 250, 300, 350];
+    const particles = [];
+
     const planets = orbits.map((radius, index) => ({
       angle: index * (Math.PI / 3),
       speed: 0.005 + index * 0.001,
@@ -41,6 +46,15 @@
         speed: 0.008 + i * 0.002
       }))
     }));
+
+    for (let i = 0; i < 80; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5
+      });
+    }
 
     function drawOrbit(radius) {
       ctx.beginPath();
@@ -64,13 +78,21 @@
       planet.x = x;
       planet.y = y;
 
-      // planeta
-      ctx.beginPath();
-      ctx.arc(x, y, planet.hover ? planet.size + 4 : planet.size, 0, 2 * Math.PI);
-      ctx.fillStyle = planet.hover ? "#00ffcc" : "#ccc";
-      ctx.fill();
+      if (planet.hover) {
+        ctx.beginPath();
+        ctx.setLineDash([2, 3]);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "#00ffcc";
+        ctx.arc(x, y, planet.size * 3, 0, 2 * Math.PI);
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.setLineDash([]);
+        ctx.arc(x, y, planet.size, 0, 2 * Math.PI);
+        ctx.fillStyle = "#ccc";
+        ctx.fill();
+      }
 
-      // luas
       planet.moons.forEach(moon => {
         drawMoonOrbit(x, y, moon);
         const mx = x + moon.distance * Math.cos(moon.angle);
@@ -82,7 +104,6 @@
         moon.angle += moon.speed;
       });
 
-      // pontos flutuantes como "dados"
       planet.dataNodes.forEach(node => {
         const dx = x + node.distance * Math.cos(node.angle);
         const dy = y + node.distance * Math.sin(node.angle);
@@ -91,6 +112,36 @@
         ctx.fillStyle = "#00ffaa";
         ctx.fill();
         node.angle += node.speed;
+      });
+    }
+
+    function drawParticles() {
+      ctx.setLineDash([]);
+      particles.forEach((p, i) => {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 1.5, 0, 2 * Math.PI);
+        ctx.fillStyle = "#00ffaa";
+        ctx.fill();
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const q = particles[j];
+          const dx = p.x - q.x;
+          const dy = p.y - q.y;
+          const dist = dx * dx + dy * dy;
+          if (dist < 10000) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(q.x, q.y);
+            ctx.strokeStyle = "#00ffaa22";
+            ctx.stroke();
+          }
+        }
       });
     }
 
@@ -111,13 +162,13 @@
     function draw() {
       ctx.clearRect(0, 0, width, height);
 
-      // centro maior
+      drawParticles();
+
       ctx.beginPath();
       ctx.arc(centerX, centerY, 30, 0, 2 * Math.PI);
       ctx.fillStyle = "#ffffff";
       ctx.fill();
 
-      // órbitas e planetas
       orbits.forEach(drawOrbit);
       planets.forEach(planet => {
         drawPlanet(planet);
