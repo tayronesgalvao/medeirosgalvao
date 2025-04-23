@@ -19,6 +19,7 @@
   <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/controls/OrbitControls.js"></script>
   <script>
     const scene = new THREE.Scene();
+
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
     camera.position.set(0, 0, 500);
     camera.lookAt(0, 0, 0);
@@ -42,6 +43,8 @@
     const planetMat = new THREE.MeshBasicMaterial({ color: 0x00ffff, wireframe: true });
 
     const planets = [];
+    const linesToCenter = [];
+    const interconnectLines = [];
 
     orbitRadius.forEach((radius, i) => {
       const planet = new THREE.Mesh(planetGeo, planetMat.clone());
@@ -52,20 +55,19 @@
         pulse: 1,
         pulseDir: 1
       };
-      scene.add(planet);
       planets.push(planet);
+      scene.add(planet);
 
-      // linha até o centro
-      const lineGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), planet.position.clone()]);
+      const lineGeo = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(),
+        planet.position.clone()
+      ]);
       const lineMat = new THREE.LineBasicMaterial({ color: 0x00ffaa });
       const line = new THREE.Line(lineGeo, lineMat);
-      planet.userData.centerLine = line;
+      linesToCenter.push(line);
       scene.add(line);
     });
 
-    const networkLines = [];
-
-    // cria conexões entre os planetas
     for (let i = 0; i < planets.length; i++) {
       for (let j = i + 1; j < planets.length; j++) {
         const geom = new THREE.BufferGeometry().setFromPoints([
@@ -73,9 +75,9 @@
           planets[j].position
         ]);
         const mat = new THREE.LineBasicMaterial({ color: 0x0055ff });
-        const netLine = new THREE.Line(geom, mat);
-        networkLines.push(netLine);
-        scene.add(netLine);
+        const line = new THREE.Line(geom, mat);
+        interconnectLines.push(line);
+        scene.add(line);
       }
     }
 
@@ -83,32 +85,32 @@
       requestAnimationFrame(animate);
       controls.update();
 
-      planets.forEach((planet) => {
+      planets.forEach((planet, i) => {
         const u = planet.userData;
         u.angle += u.speed;
         const x = Math.cos(u.angle) * u.radius;
         const z = Math.sin(u.angle) * u.radius;
         planet.position.set(x, 0, z);
 
-        // pulsar
         if (u.pulse > 1.2) u.pulseDir = -1;
         if (u.pulse < 0.8) u.pulseDir = 1;
         u.pulse += u.pulseDir * 0.01;
         planet.scale.set(u.pulse, u.pulse, u.pulse);
 
-        // atualizar linha com o centro
-        u.centerLine.geometry.setFromPoints([new THREE.Vector3(0, 0, 0), planet.position.clone()]);
+        linesToCenter[i].geometry.setFromPoints([
+          new THREE.Vector3(0, 0, 0),
+          planet.position.clone()
+        ]);
       });
 
-      // atualizar rede entre planetas
-      let index = 0;
+      let idx = 0;
       for (let i = 0; i < planets.length; i++) {
         for (let j = i + 1; j < planets.length; j++) {
-          networkLines[index].geometry.setFromPoints([
+          interconnectLines[idx].geometry.setFromPoints([
             planets[i].position,
             planets[j].position
           ]);
-          index++;
+          idx++;
         }
       }
 
