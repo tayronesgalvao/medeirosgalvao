@@ -1,70 +1,248 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Esfera 3D de Partículas Visível</title>
+  <meta charset="UTF-8" />
+  <title>Ecossistema Orbital com Partículas Interativas</title>
   <style>
-    body { margin: 0; overflow: hidden; background: #000; }
-    canvas { display: block; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: transparent;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    canvas {
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
   </style>
 </head>
 <body>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/controls/OrbitControls.js"></script>
+  <canvas id="orbitCanvas"></canvas>
+
   <script>
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 150;
+    const canvas = document.getElementById("orbitCanvas");
+    const ctx = canvas.getContext("2d");
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    document.body.appendChild(renderer.domElement);
-
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.05;
-
-    // Parâmetros da esfera
-    const sphereRadius = 60;
-    const pointCount = 1200;
-    const positions = new Float32Array(pointCount * 3);
-
-    for (let i = 0; i < pointCount; i++) {
-      const theta = 2 * Math.PI * Math.random();
-      const phi = Math.acos(2 * Math.random() - 1);
-      const x = sphereRadius * Math.sin(phi) * Math.cos(theta);
-      const y = sphereRadius * Math.sin(phi) * Math.sin(theta);
-      const z = sphereRadius * Math.cos(phi);
-      positions[i * 3] = x;
-      positions[i * 3 + 1] = y;
-      positions[i * 3 + 2] = z;
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      centerX = canvas.width / 2;
+      centerY = canvas.height / 2;
     }
 
-    const geometry = new THREE.BufferGeometry();
-    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    let centerX, centerY;
+    resizeCanvas();
 
-    // Aumentamos o tamanho das partículas aqui 👇
-    const material = new THREE.PointsMaterial({
-      color: 0xffffff,
-      size: 2.5,
-      sizeAttenuation: true
+    const particleRadiusLimit = 400;
+    const orbits = [100, 150, 200, 250, 300, 350];
+    const particles = [];
+
+    const planets = orbits.map((radius, index) => ({
+      angle: index * (Math.PI / 3),
+      speed: 0.005 + index * 0.001,
+      radius,
+      size: 10 + (index % 2) * 4,
+      hover: false,
+      expanded: false,
+      moons: index % 2 === 0 ? [{ angle: 0, speed: 0.015, distance: 20 }] : [],
+      dataNodes: Array.from({ length: 4 }, (_, i) => ({
+        angle: (Math.PI / 2) * i,
+        distance: 15 + i * 10,
+        speed: 0.008 + i * 0.002
+      }))
+    }));
+
+    for (let i = 0; i < 100; i++) {
+      let angle = Math.random() * 2 * Math.PI;
+      let radius = Math.random() * particleRadiusLimit;
+      particles.push({
+        x: centerX + radius * Math.cos(angle),
+        y: centerY + radius * Math.sin(angle),
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5
+      });
+    }
+
+    function drawOrbit(radius) {
+      ctx.beginPath();
+      ctx.setLineDash([3, 6]);
+      ctx.strokeStyle = "#4448";
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.stroke();
+    }
+
+    function drawMoonOrbit(x, y, moon) {
+      ctx.beginPath();
+      ctx.setLineDash([2, 4]);
+      ctx.strokeStyle = "#6664";
+      ctx.arc(x, y, moon.distance, 0, 2 * Math.PI);
+      ctx.stroke();
+    }
+
+    function drawPlanet(planet) {
+      const x = centerX + planet.radius * Math.cos(planet.angle);
+      const y = centerY + planet.radius * Math.sin(planet.angle);
+      planet.x = x;
+      planet.y = y;
+
+      if (planet.hover || planet.expanded) {
+        ctx.beginPath();
+        ctx.setLineDash([2, 3]);
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "#00ffcc";
+        ctx.arc(x, y, planet.size * 3, 0, 2 * Math.PI);
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.setLineDash([]);
+        ctx.arc(x, y, planet.size, 0, 2 * Math.PI);
+        ctx.fillStyle = "#ccc";
+        ctx.fill();
+      }
+
+      planet.moons.forEach(moon => {
+        drawMoonOrbit(x, y, moon);
+        const mx = x + moon.distance * Math.cos(moon.angle);
+        const my = y + moon.distance * Math.sin(moon.angle);
+        ctx.beginPath();
+        ctx.arc(mx, my, 3, 0, 2 * Math.PI);
+        ctx.fillStyle = "#888";
+        ctx.fill();
+        moon.angle += moon.speed;
+      });
+
+      planet.dataNodes.forEach(node => {
+        const dx = x + node.distance * Math.cos(node.angle);
+        const dy = y + node.distance * Math.sin(node.angle);
+        ctx.beginPath();
+        ctx.arc(dx, dy, 1.5, 0, 2 * Math.PI);
+        ctx.fillStyle = "#00ffaa";
+        ctx.fill();
+        node.angle += node.speed;
+      });
+    }
+
+    function drawParticles(mouseX, mouseY) {
+      ctx.setLineDash([]);
+      particles.forEach((p, i) => {
+        const dx = p.x - mouseX;
+        const dy = p.y - mouseY;
+        const dist = dx * dx + dy * dy;
+        if (dist < 5000) {
+          p.vx += dx * -0.0001;
+          p.vy += dy * -0.0001;
+        }
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < centerX - particleRadiusLimit || p.x > centerX + particleRadiusLimit) p.vx *= -1;
+        if (p.y < centerY - particleRadiusLimit || p.y > centerY + particleRadiusLimit) p.vy *= -1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 1.5, 0, 2 * Math.PI);
+        ctx.fillStyle = "#00ffaa";
+        ctx.fill();
+
+        for (let j = i + 1; j < particles.length; j++) {
+          const q = particles[j];
+          const dpx = p.x - q.x;
+          const dpy = p.y - q.y;
+          const d = dpx * dpx + dpy * dpy;
+          if (d < 5000) {
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(q.x, q.y);
+            ctx.strokeStyle = "#00ffaa22";
+            ctx.stroke();
+          }
+        }
+      });
+    }
+
+    function drawNetworkLines() {
+      ctx.setLineDash([2, 6]);
+      ctx.strokeStyle = "#00ff8888";
+      planets.forEach(a => {
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(centerX, centerY);
+        ctx.stroke();
+
+        planets.forEach(b => {
+          if (a !== b) {
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        });
+      });
+    }
+
+    let mouseX = centerX, mouseY = centerY;
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      drawParticles(mouseX, mouseY);
+
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 30, 0, 2 * Math.PI);
+      ctx.fillStyle = "#ffffff";
+      ctx.fill();
+
+      orbits.forEach(drawOrbit);
+      planets.forEach(planet => {
+        drawPlanet(planet);
+        planet.angle += planet.speed;
+      });
+
+      drawNetworkLines();
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+
+    window.addEventListener("resize", () => {
+      resizeCanvas();
     });
 
-    const pointCloud = new THREE.Points(geometry, material);
-    scene.add(pointCloud);
+    canvas.addEventListener("mousemove", e => {
+      const rect = canvas.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
 
-    function animate() {
-      requestAnimationFrame(animate);
-      controls.update();
-      renderer.render(scene, camera);
-    }
+      planets.forEach(p => {
+        const dx = mouseX - p.x;
+        const dy = mouseY - p.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        p.hover = distance < p.size + 6;
+      });
+    });
 
-    animate();
+    canvas.addEventListener("click", e => {
+      const rect = canvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
 
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      planets.forEach(p => {
+        const dx = clickX - p.x;
+        const dy = clickY - p.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < p.size + 6) {
+          p.expanded = !p.expanded;
+        }
+      });
     });
   </script>
 </body>
