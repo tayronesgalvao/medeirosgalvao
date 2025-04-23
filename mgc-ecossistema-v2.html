@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <title>Ecossistema Orbital com Partículas</title>
+  <title>Ecossistema Orbital com Partículas Interativas</title>
   <style>
     body {
       margin: 0;
@@ -30,6 +30,8 @@
     const centerX = width / 2;
     const centerY = height / 2;
 
+    const particleRadiusLimit = 400; // partículas dentro dessa distância do centro
+
     const orbits = [100, 150, 200, 250, 300, 350];
     const particles = [];
 
@@ -39,6 +41,7 @@
       radius,
       size: 10 + (index % 2) * 4,
       hover: false,
+      expanded: false,
       moons: index % 2 === 0 ? [{ angle: 0, speed: 0.015, distance: 20 }] : [],
       dataNodes: Array.from({ length: 4 }, (_, i) => ({
         angle: (Math.PI / 2) * i,
@@ -47,10 +50,12 @@
       }))
     }));
 
-    for (let i = 0; i < 80; i++) {
+    for (let i = 0; i < 100; i++) {
+      let angle = Math.random() * 2 * Math.PI;
+      let radius = Math.random() * particleRadiusLimit;
       particles.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
+        x: centerX + radius * Math.cos(angle),
+        y: centerY + radius * Math.sin(angle),
         vx: (Math.random() - 0.5) * 0.5,
         vy: (Math.random() - 0.5) * 0.5
       });
@@ -78,7 +83,7 @@
       planet.x = x;
       planet.y = y;
 
-      if (planet.hover) {
+      if (planet.hover || planet.expanded) {
         ctx.beginPath();
         ctx.setLineDash([2, 3]);
         ctx.lineWidth = 1;
@@ -115,14 +120,22 @@
       });
     }
 
-    function drawParticles() {
+    function drawParticles(mouseX, mouseY) {
       ctx.setLineDash([]);
       particles.forEach((p, i) => {
+        const dx = p.x - mouseX;
+        const dy = p.y - mouseY;
+        const dist = dx * dx + dy * dy;
+        if (dist < 5000) {
+          p.vx += dx * -0.0001;
+          p.vy += dy * -0.0001;
+        }
+
         p.x += p.vx;
         p.y += p.vy;
 
-        if (p.x < 0 || p.x > width) p.vx *= -1;
-        if (p.y < 0 || p.y > height) p.vy *= -1;
+        if (p.x < centerX - particleRadiusLimit || p.x > centerX + particleRadiusLimit) p.vx *= -1;
+        if (p.y < centerY - particleRadiusLimit || p.y > centerY + particleRadiusLimit) p.vy *= -1;
 
         ctx.beginPath();
         ctx.arc(p.x, p.y, 1.5, 0, 2 * Math.PI);
@@ -131,10 +144,10 @@
 
         for (let j = i + 1; j < particles.length; j++) {
           const q = particles[j];
-          const dx = p.x - q.x;
-          const dy = p.y - q.y;
-          const dist = dx * dx + dy * dy;
-          if (dist < 10000) {
+          const dpx = p.x - q.x;
+          const dpy = p.y - q.y;
+          const d = dpx * dpx + dpy * dpy;
+          if (d < 5000) {
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
             ctx.lineTo(q.x, q.y);
@@ -148,21 +161,31 @@
     function drawNetworkLines() {
       ctx.setLineDash([2, 6]);
       ctx.strokeStyle = "#00ff8888";
-      planets.forEach((a, i) => {
-        for (let j = i + 1; j < planets.length; j++) {
-          const b = planets[j];
-          ctx.beginPath();
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-          ctx.stroke();
-        }
+      planets.forEach(a => {
+        // ligação com o centro
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(centerX, centerY);
+        ctx.stroke();
+
+        // ligação com outros planetas
+        planets.forEach(b => {
+          if (a !== b) {
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        });
       });
     }
+
+    let mouseX = centerX, mouseY = centerY;
 
     function draw() {
       ctx.clearRect(0, 0, width, height);
 
-      drawParticles();
+      drawParticles(mouseX, mouseY);
 
       ctx.beginPath();
       ctx.arc(centerX, centerY, 30, 0, 2 * Math.PI);
@@ -189,14 +212,29 @@
 
     canvas.addEventListener("mousemove", e => {
       const rect = canvas.getBoundingClientRect();
-      const mouseX = e.clientX - rect.left;
-      const mouseY = e.clientY - rect.top;
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
 
       planets.forEach(p => {
         const dx = mouseX - p.x;
         const dy = mouseY - p.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
         p.hover = distance < p.size + 6;
+      });
+    });
+
+    canvas.addEventListener("click", e => {
+      const rect = canvas.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+
+      planets.forEach(p => {
+        const dx = clickX - p.x;
+        const dy = clickY - p.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < p.size + 6) {
+          p.expanded = !p.expanded;
+        }
       });
     });
   </script>
