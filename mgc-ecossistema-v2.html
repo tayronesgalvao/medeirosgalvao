@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ecossistema Orbital MGC</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #000a12;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="orbitCanvas"></canvas>
+
+  <script>
+    const canvas = document.getElementById("orbitCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
+    const centerX = width / 2;
+    const centerY = height / 2;
+
+    const orbits = [60, 90, 120, 150, 180];
+    const planets = orbits.map((radius, index) => ({
+      angle: index * (Math.PI / 3),
+      speed: 0.005 + index * 0.0015,
+      radius
+    }));
+
+    function drawOrbit(radius) {
+      ctx.beginPath();
+      ctx.setLineDash([3, 6]);
+      ctx.strokeStyle = "#8884";
+      ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.stroke();
+    }
+
+    function drawPlanet(planet) {
+      const x = centerX + planet.radius * Math.cos(planet.angle);
+      const y = centerY + planet.radius * Math.sin(planet.angle);
+
+      ctx.beginPath();
+      ctx.arc(x, y, 6, 0, 2 * Math.PI);
+      ctx.fillStyle = "#ccc";
+      ctx.fill();
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, width, height);
+
+      // draw center
+      ctx.beginPath();
+      ctx.arc(centerX, centerY, 8, 0, 2 * Math.PI);
+      ctx.fillStyle = "#ffffff";
+      ctx.fill();
+
+      // draw orbits and planets
+      orbits.forEach(drawOrbit);
+      planets.forEach(planet => {
+        drawPlanet(planet);
+        planet.angle += planet.speed;
+      });
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+
+    window.addEventListener("resize", () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
