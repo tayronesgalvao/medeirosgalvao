@@ -27,12 +27,14 @@
     const centerX = width / 2;
     const centerY = height / 2;
 
-    const orbits = [60, 90, 120, 150, 180];
+    const orbits = [80, 120, 160, 200, 240, 280];
     const planets = orbits.map((radius, index) => ({
       angle: index * (Math.PI / 3),
-      speed: 0.005 + index * 0.0015,
+      speed: 0.005 + index * 0.001,
       radius,
-      hover: false
+      size: 8 + (index % 2) * 4, // tamanhos diferentes
+      hover: false,
+      moons: index % 2 === 0 ? [{ angle: 0, speed: 0.02, distance: 15 }] : []
     }));
 
     function drawOrbit(radius) {
@@ -50,21 +52,32 @@
       planet.y = y;
 
       ctx.beginPath();
-      ctx.arc(x, y, planet.hover ? 10 : 6, 0, 2 * Math.PI);
+      ctx.arc(x, y, planet.hover ? planet.size + 3 : planet.size, 0, 2 * Math.PI);
       ctx.fillStyle = planet.hover ? "#00ffcc" : "#ccc";
       ctx.fill();
+
+      // desenhar luas
+      planet.moons.forEach(moon => {
+        const mx = x + moon.distance * Math.cos(moon.angle);
+        const my = y + moon.distance * Math.sin(moon.angle);
+        ctx.beginPath();
+        ctx.arc(mx, my, 3, 0, 2 * Math.PI);
+        ctx.fillStyle = "#888";
+        ctx.fill();
+        moon.angle += moon.speed;
+      });
     }
 
     function draw() {
       ctx.clearRect(0, 0, width, height);
 
-      // draw center
+      // centro maior
       ctx.beginPath();
-      ctx.arc(centerX, centerY, 8, 0, 2 * Math.PI);
+      ctx.arc(centerX, centerY, 12, 0, 2 * Math.PI);
       ctx.fillStyle = "#ffffff";
       ctx.fill();
 
-      // draw orbits and planets
+      // desenha órbitas e planetas
       orbits.forEach(drawOrbit);
       planets.forEach(planet => {
         drawPlanet(planet);
@@ -90,7 +103,7 @@
         const dx = mouseX - p.x;
         const dy = mouseY - p.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        p.hover = distance < 10;
+        p.hover = distance < p.size + 5;
       });
     });
   </script>
