@@ -27,20 +27,20 @@
     const centerX = width / 2;
     const centerY = height / 2;
 
-    const orbits = [80, 120, 160, 200, 240, 280];
+    const orbits = [100, 150, 200, 250, 300, 350];
     const planets = orbits.map((radius, index) => ({
       angle: index * (Math.PI / 3),
       speed: 0.005 + index * 0.001,
       radius,
-      size: 8 + (index % 2) * 4,
+      size: 10 + (index % 2) * 4,
       hover: false,
-      moons: index % 2 === 0 ? [{ angle: 0, speed: 0.02, distance: 15 }] : []
+      moons: index % 2 === 0 ? [{ angle: 0, speed: 0.015, distance: 20 }] : []
     }));
 
     function drawOrbit(radius) {
       ctx.beginPath();
       ctx.setLineDash([3, 6]);
-      ctx.strokeStyle = "#8884";
+      ctx.strokeStyle = "#4448";
       ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
       ctx.stroke();
     }
@@ -48,7 +48,7 @@
     function drawMoonOrbit(x, y, moon) {
       ctx.beginPath();
       ctx.setLineDash([2, 4]);
-      ctx.strokeStyle = "#5558";
+      ctx.strokeStyle = "#6664";
       ctx.arc(x, y, moon.distance, 0, 2 * Math.PI);
       ctx.stroke();
     }
@@ -59,12 +59,13 @@
       planet.x = x;
       planet.y = y;
 
+      // planeta
       ctx.beginPath();
-      ctx.arc(x, y, planet.hover ? planet.size + 3 : planet.size, 0, 2 * Math.PI);
+      ctx.arc(x, y, planet.hover ? planet.size + 4 : planet.size, 0, 2 * Math.PI);
       ctx.fillStyle = planet.hover ? "#00ffcc" : "#ccc";
       ctx.fill();
 
-      // desenhar luas e suas órbitas
+      // luas
       planet.moons.forEach(moon => {
         drawMoonOrbit(x, y, moon);
         const mx = x + moon.distance * Math.cos(moon.angle);
@@ -76,7 +77,7 @@
         moon.angle += moon.speed;
       });
 
-      // desenhar dados orbitando (elementos inteligentes)
+      // dados inteligentes orbitando
       for (let i = 0; i < 3; i++) {
         const angleOffset = planet.angle + i * Math.PI * 2 / 3;
         const dx = centerX + planet.radius * Math.cos(angleOffset);
@@ -107,18 +108,17 @@
 
       // centro maior
       ctx.beginPath();
-      ctx.arc(centerX, centerY, 24, 0, 2 * Math.PI);
+      ctx.arc(centerX, centerY, 30, 0, 2 * Math.PI);
       ctx.fillStyle = "#ffffff";
       ctx.fill();
 
-      // desenha órbitas e planetas
+      // órbitas e planetas
       orbits.forEach(drawOrbit);
       planets.forEach(planet => {
         drawPlanet(planet);
         planet.angle += planet.speed;
       });
 
-      // linhas de rede
       drawNetworkLines();
 
       requestAnimationFrame(draw);
@@ -140,7 +140,7 @@
         const dx = mouseX - p.x;
         const dy = mouseY - p.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
-        p.hover = distance < p.size + 5;
+        p.hover = distance < p.size + 6;
       });
     });
   </script>
