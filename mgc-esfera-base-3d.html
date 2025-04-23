@@ -2,16 +2,10 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Esfera 3D Interativa</title>
+  <title>Esfera 3D de Partículas</title>
   <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background: #000;
-    }
-    canvas {
-      display: block;
-    }
+    body { margin: 0; overflow: hidden; background: #000; }
+    canvas { display: block; }
   </style>
 </head>
 <body>
@@ -29,8 +23,6 @@
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
-    controls.rotateSpeed = 0.3;
-    controls.zoomSpeed = 0.5;
 
     const sphereRadius = 60;
     const count = 1000;
@@ -47,11 +39,11 @@
       positions[i * 3 + 2] = z;
     }
 
-    const particleGeometry = new THREE.BufferGeometry();
-    particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
-    const particleMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 1 });
-    const pointCloud = new THREE.Points(particleGeometry, particleMaterial);
+    const material = new THREE.PointsMaterial({ color: 0xffffff, size: 1 });
+    const pointCloud = new THREE.Points(geometry, material);
     scene.add(pointCloud);
 
     function animate() {
