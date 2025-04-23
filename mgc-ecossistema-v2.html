@@ -32,7 +32,7 @@
       angle: index * (Math.PI / 3),
       speed: 0.005 + index * 0.001,
       radius,
-      size: 8 + (index % 2) * 4, // tamanhos diferentes
+      size: 8 + (index % 2) * 4,
       hover: false,
       moons: index % 2 === 0 ? [{ angle: 0, speed: 0.02, distance: 15 }] : []
     }));
@@ -42,6 +42,14 @@
       ctx.setLineDash([3, 6]);
       ctx.strokeStyle = "#8884";
       ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+      ctx.stroke();
+    }
+
+    function drawMoonOrbit(x, y, moon) {
+      ctx.beginPath();
+      ctx.setLineDash([2, 4]);
+      ctx.strokeStyle = "#5558";
+      ctx.arc(x, y, moon.distance, 0, 2 * Math.PI);
       ctx.stroke();
     }
 
@@ -56,8 +64,9 @@
       ctx.fillStyle = planet.hover ? "#00ffcc" : "#ccc";
       ctx.fill();
 
-      // desenhar luas
+      // desenhar luas e suas órbitas
       planet.moons.forEach(moon => {
+        drawMoonOrbit(x, y, moon);
         const mx = x + moon.distance * Math.cos(moon.angle);
         const my = y + moon.distance * Math.sin(moon.angle);
         ctx.beginPath();
@@ -66,6 +75,31 @@
         ctx.fill();
         moon.angle += moon.speed;
       });
+
+      // desenhar dados orbitando (elementos inteligentes)
+      for (let i = 0; i < 3; i++) {
+        const angleOffset = planet.angle + i * Math.PI * 2 / 3;
+        const dx = centerX + planet.radius * Math.cos(angleOffset);
+        const dy = centerY + planet.radius * Math.sin(angleOffset);
+        ctx.beginPath();
+        ctx.arc(dx, dy, 2, 0, 2 * Math.PI);
+        ctx.fillStyle = "#00ffaa";
+        ctx.fill();
+      }
+    }
+
+    function drawNetworkLines() {
+      ctx.setLineDash([2, 6]);
+      ctx.strokeStyle = "#00ff8888";
+      planets.forEach((a, i) => {
+        for (let j = i + 1; j < planets.length; j++) {
+          const b = planets[j];
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+      });
     }
 
     function draw() {
@@ -73,7 +107,7 @@
 
       // centro maior
       ctx.beginPath();
-      ctx.arc(centerX, centerY, 12, 0, 2 * Math.PI);
+      ctx.arc(centerX, centerY, 24, 0, 2 * Math.PI);
       ctx.fillStyle = "#ffffff";
       ctx.fill();
 
@@ -83,6 +117,9 @@
         drawPlanet(planet);
         planet.angle += planet.speed;
       });
+
+      // linhas de rede
+      drawNetworkLines();
 
       requestAnimationFrame(draw);
     }
