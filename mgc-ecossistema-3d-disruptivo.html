@@ -21,7 +21,8 @@
     const scene = new THREE.Scene();
 
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
-    camera.position.set(0, 200, 400);
+    camera.position.set(0, 0, 500);
+    camera.lookAt(0, 0, 0);
 
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -82,7 +83,6 @@
         const z = Math.sin(u.angle) * u.radius;
         planet.position.set(x, 0, z);
 
-        // pulsa
         if (u.pulse > 1.2) u.pulseDir = -1;
         if (u.pulse < 0.8) u.pulseDir = 1;
         u.pulse += u.pulseDir * 0.01;
@@ -95,7 +95,6 @@
         lines[i].computeLineDistances();
       });
 
-      // interconexões
       for (let i = 0; i < planets.length; i++) {
         for (let j = i + 1; j < planets.length; j++) {
           const geom = new THREE.BufferGeometry().setFromPoints([
