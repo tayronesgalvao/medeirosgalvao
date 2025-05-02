@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Mapa Nordeste - Logística Interligada</title>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #000;
+      font-family: sans-serif;
+    }
+
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .usina {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background-color: #00ff00;
+      border-radius: 50%;
+      z-index: 2;
+    }
+
+    .usina:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      top: -25px;
+      left: -20px;
+      background: rgba(0,0,0,0.8);
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Contêiner das partículas -->
+  <div id="particles-js"></div>
+
+  <!-- Pontos de usinas eólicas -->
+  <div class="usina" style="top: 28%; left: 80.65%;" data-tooltip="Usina Natal/RN"></div>
+  <div class="usina" style="top: 30.96%; left: 75.81%;" data-tooltip="Usina Mossoró/RN"></div>
+  <div class="usina" style="top: 38.7%; left: 70.97%;" data-tooltip="Usina Sertão/CE"></div>
+  <div class="usina" style="top: 41.8%; left: 67.74%;" data-tooltip="Usina Cariri/CE"></div>
+  <div class="usina" style="top: 47.99%; left: 74.19%;" data-tooltip="Usina Araripina/PE"></div>
+  <div class="usina" style="top: 51.08%; left: 77.42%;" data-tooltip="Usina Petrolina/PE"></div>
+  <div class="usina" style="top: 63.45%; left: 59.68%;" data-tooltip="Usina Caetité/BA"></div>
+  <div class="usina" style="top: 66.56%; left: 58.06%;" data-tooltip="Usina Guanambi/BA"></div>
+  <div class="usina" style="top: 71.21%; left: 48.39%;" data-tooltip="Usina Brumado/BA"></div>
+  <div class="usina" style="top: 77.42%; left: 40.32%;" data-tooltip="Usina Chapada/BA"></div>
+  <div class="usina" style="top: 82.72%; left: 37.1%;" data-tooltip="Usina Sul BA"></div>
+  <div class="usina" style="top: 89.78%; left: 32.26%;" data-tooltip="Usina Norte MG"></div>
+
+  <!-- Script de partículas em malha simulando o mapa -->
+  <script>
+    particlesJS("particles-js", {
+      particles: {
+        number: {
+          value: 160,
+          density: {
+            enable: true,
+            value_area: 800
+          }
+        },
+        color: {
+          value: "#ffffff"
+        },
+        shape: {
+          type: "circle"
+        },
+        opacity: {
+          value: 0.3,
+          random: false
+        },
+        size: {
+          value: 2,
+          random: true
+        },
+        line_linked: {
+          enable: true,
+          distance: 100,
+          color: "#ffffff",
+          opacity: 0.5,
+          width: 1
+        },
+        move: {
+          enable: true,
+          speed: 1,
+          direction: "none",
+          random: false,
+          straight: false,
+          out_mode: "out",
+          bounce: false
+        }
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: {
+          onhover: {
+            enable: true,
+            mode: "grab"
+          },
+          onclick: {
+            enable: true,
+            mode: "push"
+          },
+          resize: true
+        },
+        modes: {
+          grab: {
+            distance: 140,
+            line_linked: {
+              opacity: 0.9
+            }
+          },
+          push: {
+            particles_nb: 4
+          }
+        }
+      },
+      retina_detect: true
+    });
+  </script>
+
+</body>
+</html>
