@@ -36,26 +36,26 @@
     }
 
     #svg-container svg path {
-      fill: rgba(70, 130, 180, 0.4);
-      stroke: #ffffff;
+      fill: rgba(0, 128, 0, 0.4); /* verde escuro */
+      stroke: #00cc00;
       stroke-width: 1;
       transition: all 0.5s ease;
       pointer-events: auto;
     }
 
     #svg-container svg path:hover {
-      fill: rgba(0, 255, 255, 0.6);
-      stroke: #00ffff;
-      filter: drop-shadow(0 0 10px #0ff);
+      fill: rgba(0, 255, 0, 0.7); /* verde claro */
+      stroke: #00ff00;
+      filter: drop-shadow(0 0 10px #00ff00);
       cursor: pointer;
       stroke-width: 2;
       animation: glow 1.5s infinite ease-in-out;
     }
 
     @keyframes glow {
-      0% { filter: drop-shadow(0 0 5px #0ff); }
-      50% { filter: drop-shadow(0 0 15px #0ff); }
-      100% { filter: drop-shadow(0 0 5px #0ff); }
+      0% { filter: drop-shadow(0 0 5px #00ff00); }
+      50% { filter: drop-shadow(0 0 15px #00ff00); }
+      100% { filter: drop-shadow(0 0 5px #00ff00); }
     }
 
     #particles-js {
