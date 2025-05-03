@@ -11,8 +11,15 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background: transparent;
+      background-color: #000;
       font-family: sans-serif;
+    }
+
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
     }
 
     #svg-container {
@@ -25,53 +32,31 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      pointer-events: none;
+      pointer-events: none; /* impede clique fora dos paths */
     }
 
     #svg-container svg {
       width: 90%;
       height: auto;
       max-height: 100%;
-      fill-opacity: 1;
+      pointer-events: none;
     }
 
     #svg-container svg path {
-      fill: #006400; /* verde escuro visível */
-      stroke: #00ff00;
-      stroke-width: 1.2;
-      transition: all 0.3s ease-in-out;
-      pointer-events: auto;
+      fill: rgba(70, 130, 180, 0.6); /* mais visível */
+      stroke: #ffffff;
+      stroke-width: 1;
+      transition: all 0.3s ease;
+      pointer-events: auto; /* ativa interação nos paths */
     }
 
     #svg-container svg path:hover {
-      fill: #00ff99; /* verde neon vivo */
-      stroke: #00ff99;
-      filter: drop-shadow(0 0 25px #00ff99);
+      fill: rgba(0, 255, 255, 0.9);
+      stroke: #00ffff;
+      filter: drop-shadow(0 0 8px #00ffff);
+      transform: scale(1.02);
+      transform-origin: center;
       cursor: pointer;
-      stroke-width: 2;
-      animation: glow 1.2s infinite ease-in-out;
-    }
-
-    @keyframes glow {
-      0% { filter: drop-shadow(0 0 5px #00ff99); }
-      50% { filter: drop-shadow(0 0 25px #00ff99); }
-      100% { filter: drop-shadow(0 0 5px #00ff99); }
-    }
-
-    #particles-js {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-    }
-
-    @media (max-width: 768px) {
-      #svg-container svg {
-        width: 100%;
-      }
-      #svg-container {
-        pointer-events: auto;
-      }
     }
   </style>
 </head>
@@ -83,21 +68,21 @@
   <script>
     particlesJS("particles-js", {
       particles: {
-        number: { value: 180, density: { enable: true, value_area: 800 } },
-        color: { value: "#66ffc2" },
+        number: { value: 160, density: { enable: true, value_area: 800 } },
+        color: { value: "#ffffff" },
         shape: { type: "circle" },
-        opacity: { value: 0.35, random: false },
-        size: { value: 2.5, random: true },
+        opacity: { value: 0.3, random: false },
+        size: { value: 2, random: true },
         line_linked: {
           enable: true,
           distance: 100,
-          color: "#66ffc2",
-          opacity: 0.6,
+          color: "#ffffff",
+          opacity: 0.5,
           width: 1
         },
         move: {
           enable: true,
-          speed: 1.2,
+          speed: 1,
           direction: "none",
           random: false,
           straight: false,
@@ -123,18 +108,7 @@
     fetch("mapa_nordeste_vetor.svg")
       .then(res => res.text())
       .then(svg => {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(svg, "image/svg+xml");
-
-        doc.querySelectorAll("path").forEach(path => {
-          if (!path.querySelector("title") && path.id) {
-            const title = doc.createElementNS("http://www.w3.org/2000/svg", "title");
-            title.textContent = path.id.charAt(0).toUpperCase() + path.id.slice(1);
-            path.appendChild(title);
-          }
-        });
-
-        document.getElementById("svg-container").innerHTML = new XMLSerializer().serializeToString(doc);
+        document.getElementById("svg-container").innerHTML = svg;
       });
   </script>
 
