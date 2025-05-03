@@ -182,11 +182,14 @@
             line.setAttribute("x2", positions[j].cx);
             line.setAttribute("y2", positions[j].cy);
             line.setAttribute("stroke", "#00ff99");
-            line.setAttribute("stroke-opacity", "0.1");
-            line.setAttribute("stroke-width", "0.5");
+            line.setAttribute("stroke-opacity", "0.15");
+            line.setAttribute("stroke-width", "0.6");
             svgElement.insertBefore(line, svgElement.firstChild);
           }
         }
+
+        // Adiciona SVG diretamente ao DOM preservando elementos criados
+        document.getElementById("svg-container").appendChild(svgElement);
 
         paths.forEach(path => {
           if (!path.querySelector("title") && path.id) {
@@ -206,8 +209,6 @@
             tooltip.style.display = "none";
           });
         });
-
-        document.getElementById("svg-container").innerHTML = new XMLSerializer().serializeToString(doc);
       });
   </script>
 
