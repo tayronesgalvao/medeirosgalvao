@@ -61,12 +61,11 @@
   <canvas id="neural-canvas"></canvas>
 
   <div id="svg-container">
-    <!-- Aqui deve estar seu SVG do mapa já embutido -->
-    <svg viewBox="0 0 800 800" id="mapa">
-      <!-- Exemplo simplificado -->
-      <path id="rn" d="M 300,200 L 310,210 L 320,200 Z"/>
-      <path id="pb" d="M 350,250 L 360,260 L 370,250 Z"/>
-      <path id="pe" d="M 400,300 L 410,310 L 420,300 Z"/>
+    <!-- ⚠️ Aqui está um exemplo SVG SIMPLIFICADO com 3 estados -->
+    <svg viewBox="0 0 1000 1000" id="mapa">
+      <path id="rn" d="M 300,300 L 340,320 L 320,360 Z" />
+      <path id="pb" d="M 400,320 L 440,340 L 420,380 Z" />
+      <path id="pe" d="M 500,340 L 540,360 L 520,400 Z" />
     </svg>
   </div>
 
@@ -76,33 +75,25 @@
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const nodes = [];
+    const estados = ['rn', 'pb', 'pe'];
+    let nodes = [];
 
-    // Defina aqui os pontos (posições aproximadas dos estados no mapa)
-    const basePoints = [
-      { x: 600, y: 200 },
-      { x: 650, y: 250 },
-      { x: 700, y: 300 },
-      { x: 620, y: 340 },
-      { x: 570, y: 390 },
-      { x: 520, y: 440 },
-      { x: 600, y: 500 },
-      { x: 550, y: 580 }
-    ];
-
-    basePoints.forEach(p => {
-      nodes.push({
-        x: p.x,
-        y: p.y,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3
+    function calcularPontos() {
+      nodes = estados.map(id => {
+        const el = document.getElementById(id);
+        const box = el.getBoundingClientRect();
+        return {
+          x: box.left + box.width / 2,
+          y: box.top + box.height / 2,
+          vx: (Math.random() - 0.5) * 0.2,
+          vy: (Math.random() - 0.5) * 0.2
+        };
       });
-    });
+    }
 
-    function draw() {
+    function desenharConexoes() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Conexões
       ctx.strokeStyle = '#00ffcc';
       ctx.lineWidth = 1;
       ctx.shadowColor = '#00ffcc';
@@ -115,7 +106,7 @@
           const dx = a.x - b.x;
           const dy = a.y - b.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 150) {
+          if (dist < 300) {
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
             ctx.lineTo(b.x, b.y);
@@ -124,26 +115,32 @@
         }
       }
 
-      // Pontos
       nodes.forEach(node => {
         ctx.beginPath();
         ctx.arc(node.x, node.y, 3, 0, 2 * Math.PI);
         ctx.fillStyle = '#00ffcc';
         ctx.fill();
 
-        // Leve animação
         node.x += node.vx;
         node.y += node.vy;
 
-        // Limite de oscilação
-        if (node.x < 500 || node.x > 750) node.vx *= -1;
-        if (node.y < 150 || node.y > 600) node.vy *= -1;
+        if (node.x < 0 || node.x > window.innerWidth) node.vx *= -1;
+        if (node.y < 0 || node.y > window.innerHeight) node.vy *= -1;
       });
 
-      requestAnimationFrame(draw);
+      requestAnimationFrame(desenharConexoes);
     }
 
-    draw();
+    window.onload = () => {
+      calcularPontos();
+      desenharConexoes();
+    };
+
+    window.onresize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      calcularPontos();
+    };
   </script>
 
 </body>
