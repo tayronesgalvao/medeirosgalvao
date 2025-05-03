@@ -2,29 +2,25 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Mapa Nordeste - Logística Interligada</title>
+  <title>Mapa Nordeste com Rede Neural</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
+      background: transparent;
       overflow: hidden;
-      background: transparent; /* Fundo transparente */
-      font-family: sans-serif;
     }
 
     #svg-container {
       position: absolute;
-      top: 0;
-      left: 0;
       width: 100%;
       height: 100%;
       z-index: 1;
       display: flex;
       justify-content: center;
       align-items: center;
-      pointer-events: none;
     }
 
     #svg-container svg {
@@ -35,28 +31,100 @@
     }
 
     #svg-container svg path {
-      fill: #013220; /* verde escuro */
-      stroke: #00ff00; /* contorno verde */
+      fill: #013220;
+      stroke: #00ff00;
       stroke-width: 1;
       transition: all 0.3s ease;
       pointer-events: auto;
     }
 
     #svg-container svg path:hover {
-      fill: #39ff14; /* verde neon */
+      fill: #39ff14;
       stroke: #39ff14;
       filter: drop-shadow(0 0 8px #39ff14);
       transform: scale(1.02);
       transform-origin: center;
       cursor: pointer;
     }
+
+    #neural-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
 
+  <canvas id="neural-canvas"></canvas>
   <div id="svg-container"></div>
 
   <script>
+    const canvas = document.getElementById('neural-canvas');
+    const ctx = canvas.getContext('2d');
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Pontos representando estados (posições fictícias - ajuste conforme seu SVG real)
+    const nodes = [
+      { x: 400, y: 200 }, // RN
+      { x: 480, y: 250 }, // PB
+      { x: 550, y: 300 }, // PE
+      { x: 350, y: 300 }, // CE
+      { x: 600, y: 400 }, // AL
+      { x: 300, y: 400 }, // PI
+      { x: 650, y: 500 }, // SE
+      { x: 200, y: 500 }  // BA
+    ];
+
+    const connections = [
+      [0, 1], [1, 2], [2, 3], [3, 0], [0, 4],
+      [4, 6], [6, 7], [7, 5], [5, 3], [2, 6]
+    ];
+
+    function drawConnections() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = '#00ff99';
+      ctx.lineWidth = 1;
+      ctx.shadowColor = '#00ff99';
+      ctx.shadowBlur = 4;
+
+      connections.forEach(([i, j]) => {
+        const from = nodes[i];
+        const to = nodes[j];
+        ctx.beginPath();
+        ctx.moveTo(from.x, from.y);
+        ctx.lineTo(to.x, to.y);
+        ctx.stroke();
+      });
+
+      // Pontos visuais (opcional)
+      nodes.forEach(node => {
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, 3, 0, 2 * Math.PI);
+        ctx.fillStyle = '#00ff99';
+        ctx.fill();
+      });
+    }
+
+    function animate() {
+      drawConnections();
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    // Carrega o mapa SVG
     fetch("mapa_nordeste_vetor.svg")
       .then(res => res.text())
       .then(svg => {
