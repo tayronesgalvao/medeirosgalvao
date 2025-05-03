@@ -65,10 +65,23 @@
       z-index: 10;
     }
 
+    line.connection-line {
+      stroke: #00ffaa;
+      stroke-width: 0.8;
+      opacity: 0.5;
+      stroke-dasharray: 4 4;
+      animation: dashmove 2s linear infinite;
+    }
+
     @keyframes glow {
       0% { filter: drop-shadow(0 0 8px #00ff99); }
       50% { filter: drop-shadow(0 0 30px #00ff99); }
       100% { filter: drop-shadow(0 0 8px #00ff99); }
+    }
+
+    @keyframes dashmove {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: -8; }
     }
 
     @media (max-width: 768px) {
@@ -99,7 +112,33 @@
 
         const paths = doc.querySelectorAll("path");
 
+        // Cria camada para conexões
+        const connectionsLayer = document.createElementNS(ns, "g");
+        connectionsLayer.setAttribute("id", "connections-layer");
+        svgElement.insertBefore(connectionsLayer, svgElement.firstChild);
+
         document.getElementById("svg-container").appendChild(svgElement);
+
+        const centers = [];
+        paths.forEach((path) => {
+          const rect = path.getBBox();
+          const centerX = rect.x + rect.width / 2;
+          const centerY = rect.y + rect.height / 2;
+          centers.push({ x: centerX, y: centerY });
+        });
+
+        // Desenha conexões como rede neural
+        for (let i = 0; i < centers.length; i++) {
+          for (let j = i + 1; j < centers.length; j++) {
+            const line = document.createElementNS(ns, "line");
+            line.setAttribute("x1", centers[i].x);
+            line.setAttribute("y1", centers[i].y);
+            line.setAttribute("x2", centers[j].x);
+            line.setAttribute("y2", centers[j].y);
+            line.setAttribute("class", "connection-line");
+            connectionsLayer.appendChild(line);
+          }
+        }
 
         paths.forEach((path) => {
           if (!path.querySelector("title") && path.id) {
