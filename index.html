@@ -36,7 +36,7 @@
     }
 
     #svg-container svg path {
-      fill: rgba(0, 100, 0, 0.8); /* verde escuro */
+      fill: #006400; /* verde escuro */
       stroke: #00ff00;
       stroke-width: 1.2;
       transition: all 0.3s ease-in-out;
@@ -44,7 +44,7 @@
     }
 
     #svg-container svg path:hover {
-      fill: rgba(0, 255, 0, 1); /* verde neon */
+      fill: #00ff00; /* verde neon */
       stroke: #00ff00;
       filter: drop-shadow(0 0 18px #00ff00);
       cursor: pointer;
@@ -123,7 +123,19 @@
     fetch("mapa_nordeste_vetor.svg")
       .then(res => res.text())
       .then(svg => {
-        document.getElementById("svg-container").innerHTML = svg;
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(svg, "image/svg+xml");
+
+        // Adiciona tooltips com base no ID de cada path
+        doc.querySelectorAll("path").forEach(path => {
+          if (!path.querySelector("title") && path.id) {
+            const title = doc.createElementNS("http://www.w3.org/2000/svg", "title");
+            title.textContent = path.id.charAt(0).toUpperCase() + path.id.slice(1);
+            path.appendChild(title);
+          }
+        });
+
+        document.getElementById("svg-container").innerHTML = new XMLSerializer().serializeToString(doc);
       });
   </script>
 
