@@ -36,8 +36,8 @@
     }
 
     #svg-container svg path {
-      fill: #006400;
-      stroke: #00ff00;
+      fill: #004d00; /* Verde escuro mais visível */
+      stroke: #00ff66;
       stroke-width: 1.2;
       transition: all 0.3s ease-in-out;
       pointer-events: auto;
@@ -49,15 +49,15 @@
       filter: drop-shadow(0 0 25px #00ff99);
       cursor: pointer;
       stroke-width: 2;
-      transform: scale(1.05);
+      transform: scale(1.06);
       transform-origin: center;
       animation: glow 1.2s infinite ease-in-out;
     }
 
     @keyframes glow {
-      0% { filter: drop-shadow(0 0 5px #00ff99); }
-      50% { filter: drop-shadow(0 0 25px #00ff99); }
-      100% { filter: drop-shadow(0 0 5px #00ff99); }
+      0% { filter: drop-shadow(0 0 8px #00ff99); }
+      50% { filter: drop-shadow(0 0 30px #00ff99); }
+      100% { filter: drop-shadow(0 0 8px #00ff99); }
     }
 
     #particles-js {
@@ -89,7 +89,7 @@
         number: { value: 180, density: { enable: true, value_area: 800 } },
         color: { value: "#66ffc2" },
         shape: { type: "circle" },
-        opacity: { value: 0.35, random: false },
+        opacity: { value: 0.4, random: false },
         size: { value: 2.5, random: true },
         line_linked: {
           enable: true,
