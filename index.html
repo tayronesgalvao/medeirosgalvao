@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Mapa Nordeste - Logística Interligada</title>
-  <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
   <style>
     html, body {
       margin: 0;
@@ -11,15 +10,8 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background-color: #000;
+      background: transparent; /* Fundo transparente */
       font-family: sans-serif;
-    }
-
-    #particles-js {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
     }
 
     #svg-container {
@@ -32,7 +24,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      pointer-events: none; /* impede clique fora dos paths */
+      pointer-events: none;
     }
 
     #svg-container svg {
@@ -43,17 +35,17 @@
     }
 
     #svg-container svg path {
-      fill: rgba(70, 130, 180, 0.6); /* mais visível */
-      stroke: #ffffff;
+      fill: #013220; /* verde escuro */
+      stroke: #00ff00; /* contorno verde */
       stroke-width: 1;
       transition: all 0.3s ease;
-      pointer-events: auto; /* ativa interação nos paths */
+      pointer-events: auto;
     }
 
     #svg-container svg path:hover {
-      fill: rgba(0, 255, 255, 0.9);
-      stroke: #00ffff;
-      filter: drop-shadow(0 0 8px #00ffff);
+      fill: #39ff14; /* verde neon */
+      stroke: #39ff14;
+      filter: drop-shadow(0 0 8px #39ff14);
       transform: scale(1.02);
       transform-origin: center;
       cursor: pointer;
@@ -62,49 +54,9 @@
 </head>
 <body>
 
-  <div id="particles-js"></div>
   <div id="svg-container"></div>
 
   <script>
-    particlesJS("particles-js", {
-      particles: {
-        number: { value: 160, density: { enable: true, value_area: 800 } },
-        color: { value: "#ffffff" },
-        shape: { type: "circle" },
-        opacity: { value: 0.3, random: false },
-        size: { value: 2, random: true },
-        line_linked: {
-          enable: true,
-          distance: 100,
-          color: "#ffffff",
-          opacity: 0.5,
-          width: 1
-        },
-        move: {
-          enable: true,
-          speed: 1,
-          direction: "none",
-          random: false,
-          straight: false,
-          out_mode: "out",
-          bounce: false
-        }
-      },
-      interactivity: {
-        detect_on: "canvas",
-        events: {
-          onhover: { enable: true, mode: "grab" },
-          onclick: { enable: true, mode: "push" },
-          resize: true
-        },
-        modes: {
-          grab: { distance: 140, line_linked: { opacity: 0.9 } },
-          push: { particles_nb: 4 }
-        }
-      },
-      retina_detect: true
-    });
-
     fetch("mapa_nordeste_vetor.svg")
       .then(res => res.text())
       .then(svg => {
