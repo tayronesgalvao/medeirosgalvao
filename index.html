@@ -15,13 +15,6 @@
       font-family: sans-serif;
     }
 
-    #particles-js {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-    }
-
     #svg-container {
       position: absolute;
       top: 0;
@@ -32,31 +25,50 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      pointer-events: none; /* impede clique fora dos paths */
+      pointer-events: none;
     }
 
     #svg-container svg {
       width: 90%;
       height: auto;
       max-height: 100%;
-      pointer-events: none;
+      fill-opacity: 0.2;
     }
 
     #svg-container svg path {
-      fill: rgba(70, 130, 180, 0.6); /* mais visível */
+      fill: rgba(70, 130, 180, 0.4);
       stroke: #ffffff;
       stroke-width: 1;
-      transition: all 0.3s ease;
-      pointer-events: auto; /* ativa interação nos paths */
+      transition: all 0.5s ease;
+      pointer-events: auto;
     }
 
     #svg-container svg path:hover {
-      fill: rgba(0, 255, 255, 0.9);
+      fill: rgba(0, 255, 255, 0.6);
       stroke: #00ffff;
-      filter: drop-shadow(0 0 8px #00ffff);
-      transform: scale(1.02);
-      transform-origin: center;
+      filter: drop-shadow(0 0 10px #0ff);
       cursor: pointer;
+      stroke-width: 2;
+      animation: glow 1.5s infinite ease-in-out;
+    }
+
+    @keyframes glow {
+      0% { filter: drop-shadow(0 0 5px #0ff); }
+      50% { filter: drop-shadow(0 0 15px #0ff); }
+      100% { filter: drop-shadow(0 0 5px #0ff); }
+    }
+
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    @media (max-width: 768px) {
+      #svg-container svg {
+        width: 100%;
+      }
     }
   </style>
 </head>
