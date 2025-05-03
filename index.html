@@ -2,145 +2,163 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Mapa Nordeste com Rede Neural</title>
+  <title>Mapa Nordeste - Logística Interligada</title>
   <style>
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
       height: 100%;
-      background: transparent;
       overflow: hidden;
+      background: transparent;
+      font-family: sans-serif;
     }
 
     #svg-container {
       position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
       z-index: 1;
       display: flex;
       justify-content: center;
       align-items: center;
+      pointer-events: none;
     }
 
-    svg {
+    #svg-container svg {
       width: 90%;
       height: auto;
       max-height: 100%;
+      fill-opacity: 1;
     }
 
-    path {
-      fill: #013220;
-      stroke: #00ff00;
-      stroke-width: 1;
-      transition: all 0.3s ease;
+    #svg-container svg path {
+      fill: #004d00;
+      stroke: #00ff66;
+      stroke-width: 1.2;
+      transition: all 0.3s ease-in-out;
+      pointer-events: auto;
     }
 
-    path:hover {
-      fill: #39ff14;
-      stroke: #39ff14;
-      filter: drop-shadow(0 0 8px #39ff14);
-      transform: scale(1.02);
-      transform-origin: center;
+    #svg-container svg path:hover {
+      fill: #00ff99;
+      stroke: #00ff99;
+      filter: drop-shadow(0 0 25px #00ff99);
       cursor: pointer;
+      stroke-width: 2;
+      transform: scale(1.06);
+      transform-origin: center;
+      animation: glow 1.2s infinite ease-in-out;
     }
 
-    #neural-canvas {
+    .tooltip {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
+      background: rgba(0, 0, 0, 0.7);
+      color: #00ff99;
+      padding: 6px 10px;
+      border-radius: 4px;
       pointer-events: none;
+      font-size: 14px;
+      display: none;
+      z-index: 10;
+    }
+
+    line.connection-line {
+      stroke: #00ffaa;
+      stroke-width: 0.8;
+      opacity: 0.5;
+      stroke-dasharray: 4 4;
+      animation: dashmove 2s linear infinite;
+    }
+
+    @keyframes glow {
+      0% { filter: drop-shadow(0 0 8px #00ff99); }
+      50% { filter: drop-shadow(0 0 30px #00ff99); }
+      100% { filter: drop-shadow(0 0 8px #00ff99); }
+    }
+
+    @keyframes dashmove {
+      0% { stroke-dashoffset: 0; }
+      100% { stroke-dashoffset: -8; }
+    }
+
+    @media (max-width: 768px) {
+      #svg-container svg {
+        width: 100%;
+      }
+      #svg-container {
+        pointer-events: auto;
+      }
     }
   </style>
 </head>
 <body>
 
-  <canvas id="neural-canvas"></canvas>
-
-  <div id="svg-container">
-    <!-- ⚠️ Aqui está um exemplo SVG SIMPLIFICADO com 3 estados -->
-    <svg viewBox="0 0 1000 1000" id="mapa">
-      <path id="rn" d="M 300,300 L 340,320 L 320,360 Z" />
-      <path id="pb" d="M 400,320 L 440,340 L 420,380 Z" />
-      <path id="pe" d="M 500,340 L 540,360 L 520,400 Z" />
-    </svg>
-  </div>
+  <div id="svg-container"></div>
+  <div class="tooltip" id="tooltip"></div>
 
   <script>
-    const canvas = document.getElementById('neural-canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    fetch("mapa_nordeste_vetor.svg")
+      .then(res => res.text())
+      .then(svg => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(svg, "image/svg+xml");
+        const tooltip = document.getElementById("tooltip");
 
-    const estados = ['rn', 'pb', 'pe'];
-    let nodes = [];
+        const svgElement = doc.documentElement;
+        const ns = "http://www.w3.org/2000/svg";
 
-    function calcularPontos() {
-      nodes = estados.map(id => {
-        const el = document.getElementById(id);
-        const box = el.getBoundingClientRect();
-        return {
-          x: box.left + box.width / 2,
-          y: box.top + box.height / 2,
-          vx: (Math.random() - 0.5) * 0.2,
-          vy: (Math.random() - 0.5) * 0.2
-        };
-      });
-    }
+        const paths = doc.querySelectorAll("path");
 
-    function desenharConexoes() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Cria camada para conexões
+        const connectionsLayer = document.createElementNS(ns, "g");
+        connectionsLayer.setAttribute("id", "connections-layer");
+        svgElement.insertBefore(connectionsLayer, svgElement.firstChild);
 
-      ctx.strokeStyle = '#00ffcc';
-      ctx.lineWidth = 1;
-      ctx.shadowColor = '#00ffcc';
-      ctx.shadowBlur = 6;
+        document.getElementById("svg-container").appendChild(svgElement);
 
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          const a = nodes[i];
-          const b = nodes[j];
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 300) {
-            ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.stroke();
+        const centers = [];
+        paths.forEach((path) => {
+          const rect = path.getBBox();
+          const centerX = rect.x + rect.width / 2;
+          const centerY = rect.y + rect.height / 2;
+          centers.push({ x: centerX, y: centerY });
+        });
+
+        // Desenha conexões como rede neural
+        for (let i = 0; i < centers.length; i++) {
+          for (let j = i + 1; j < centers.length; j++) {
+            const line = document.createElementNS(ns, "line");
+            line.setAttribute("x1", centers[i].x);
+            line.setAttribute("y1", centers[i].y);
+            line.setAttribute("x2", centers[j].x);
+            line.setAttribute("y2", centers[j].y);
+            line.setAttribute("class", "connection-line");
+            connectionsLayer.appendChild(line);
           }
         }
-      }
 
-      nodes.forEach(node => {
-        ctx.beginPath();
-        ctx.arc(node.x, node.y, 3, 0, 2 * Math.PI);
-        ctx.fillStyle = '#00ffcc';
-        ctx.fill();
+        paths.forEach((path) => {
+          if (!path.querySelector("title") && path.id) {
+            const title = document.createElementNS(ns, "title");
+            title.textContent = path.id.charAt(0).toUpperCase() + path.id.slice(1);
+            path.appendChild(title);
+          }
 
-        node.x += node.vx;
-        node.y += node.vy;
+          path.addEventListener("mousemove", (e) => {
+            tooltip.style.left = e.clientX + 10 + "px";
+            tooltip.style.top = e.clientY + 10 + "px";
+            tooltip.innerText = path.id;
+            tooltip.style.display = "block";
+          });
 
-        if (node.x < 0 || node.x > window.innerWidth) node.vx *= -1;
-        if (node.y < 0 || node.y > window.innerHeight) node.vy *= -1;
+          path.addEventListener("mouseleave", () => {
+            tooltip.style.display = "none";
+          });
+        });
       });
-
-      requestAnimationFrame(desenharConexoes);
-    }
-
-    window.onload = () => {
-      calcularPontos();
-      desenharConexoes();
-    };
-
-    window.onresize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      calcularPontos();
-    };
   </script>
 
 </body>
