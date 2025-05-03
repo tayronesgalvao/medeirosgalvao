@@ -70,11 +70,11 @@
       position: absolute;
       width: 40px;
       height: 40px;
-      background-image: url('https://cdn-icons-png.flaticon.com/512/1198/1198321.png');
+      background-image: url('caminhão_transsupply_icone.svg');
       background-size: contain;
       background-repeat: no-repeat;
       z-index: 6;
-      transition: all 0.6s ease-in-out;
+      transition: all 1s ease-in-out;
       pointer-events: none;
     }
 
@@ -229,12 +229,12 @@
             const x = svgRect.left + (cx / svgElement.viewBox.baseVal.width) * svgRect.width;
             const y = svgRect.top + (cy / svgElement.viewBox.baseVal.height) * svgRect.height;
 
+            truck.style.transition = 'all 1.5s ease-in-out';
             truck.style.left = `${x - 20}px`;
             truck.style.top = `${y - 20}px`;
           });
         });
 
-        // Posiciona o caminhão inicialmente no primeiro estado
         const first = positions[0];
         if (first) {
           setTimeout(() => {
