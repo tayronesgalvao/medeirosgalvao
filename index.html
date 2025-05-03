@@ -24,7 +24,134 @@
       z-index: 0;
       display: flex;
       justify-content: center;
+      align-items: center;<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Mapa Nordeste - Logística Interligada</title>
+  <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #000;
+      font-family: sans-serif;
+    }
+
+    #svg-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      display: flex;
+      justify-content: center;
       align-items: center;
+    }
+
+    #svg-container object {
+      width: 90%;
+      height: auto;
+      max-height: 100%;
+      pointer-events: none;
+    }
+
+    #particles-js {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SVG externo carregado como objeto -->
+  <div id="svg-container">
+    <object type="image/svg+xml" data="mapa_nordeste_vetor.svg"></object>
+  </div>
+
+  <!-- Partículas -->
+  <div id="particles-js"></div>
+
+  <!-- Script de partículas -->
+  <script>
+    particlesJS("particles-js", {
+      particles: {
+        number: {
+          value: 160,
+          density: {
+            enable: true,
+            value_area: 800
+          }
+        },
+        color: {
+          value: "#ffffff"
+        },
+        shape: {
+          type: "circle"
+        },
+        opacity: {
+          value: 0.3,
+          random: false
+        },
+        size: {
+          value: 2,
+          random: true
+        },
+        line_linked: {
+          enable: true,
+          distance: 100,
+          color: "#ffffff",
+          opacity: 0.5,
+          width: 1
+        },
+        move: {
+          enable: true,
+          speed: 1,
+          direction: "none",
+          random: false,
+          straight: false,
+          out_mode: "out",
+          bounce: false
+        }
+      },
+      interactivity: {
+        detect_on: "canvas",
+        events: {
+          onhover: {
+            enable: true,
+            mode: "grab"
+          },
+          onclick: {
+            enable: true,
+            mode: "push"
+          },
+          resize: true
+        },
+        modes: {
+          grab: {
+            distance: 140,
+            line_linked: {
+              opacity: 0.9
+            }
+          },
+          push: {
+            particles_nb: 4
+          }
+        }
+      },
+      retina_detect: true
+    });
+  </script>
+
+</body>
+</html>
+
     }
 
     #svg-container object {
