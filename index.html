@@ -73,8 +73,9 @@
       background-image: url('caminhão_transsupply_icone.svg');
       background-size: contain;
       background-repeat: no-repeat;
+      background-position: center;
       z-index: 6;
-      transition: all 1s ease-in-out;
+      transition: all 1.5s ease-in-out;
       pointer-events: none;
     }
 
@@ -229,7 +230,6 @@
             const x = svgRect.left + (cx / svgElement.viewBox.baseVal.width) * svgRect.width;
             const y = svgRect.top + (cy / svgElement.viewBox.baseVal.height) * svgRect.height;
 
-            truck.style.transition = 'all 1.5s ease-in-out';
             truck.style.left = `${x - 20}px`;
             truck.style.top = `${y - 20}px`;
           });
@@ -237,14 +237,12 @@
 
         const first = positions[0];
         if (first) {
-          setTimeout(() => {
-            const svgRect = svgElement.getBoundingClientRect();
-            const x = svgRect.left + (first.cx / svgElement.viewBox.baseVal.width) * svgRect.width;
-            const y = svgRect.top + (first.cy / svgElement.viewBox.baseVal.height) * svgRect.height;
+          const svgRect = svgElement.getBoundingClientRect();
+          const x = svgRect.left + (first.cx / svgElement.viewBox.baseVal.width) * svgRect.width;
+          const y = svgRect.top + (first.cy / svgElement.viewBox.baseVal.height) * svgRect.height;
 
-            truck.style.left = `${x - 20}px`;
-            truck.style.top = `${y - 20}px`;
-          }, 1000);
+          truck.style.left = `${x - 20}px`;
+          truck.style.top = `${y - 20}px`;
         }
       });
   </script>
