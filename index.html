@@ -15,15 +15,25 @@
       font-family: sans-serif;
     }
 
-    #mapa {
+    #svg-container {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: url('https://drive.google.com/uc?export=view&id=1NX-8wVfgC6VYn-a3U9p6tE8nj4N-xlJz') no-repeat center center;
-      background-size: contain;
       z-index: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #svg-container svg {
+      width: 90%;
+      height: auto;
+      max-height: 100%;
+      fill: none;
+      stroke: white;
+      stroke-width: 1;
     }
 
     #particles-js {
@@ -36,13 +46,16 @@
 </head>
 <body>
 
-  <!-- Imagem de fundo com o mapa -->
-  <div id="mapa"></div>
+  <!-- SVG incorporado diretamente -->
+  <div id="svg-container">
+    <!-- O conteúdo real do SVG será colado manualmente aqui ou incluído via <object> se preferir -->
+    <object type="image/svg+xml" data="mapa_nordeste_vetor.svg"></object>
+  </div>
 
-  <!-- Contêiner das partículas -->
+  <!-- Partículas -->
   <div id="particles-js"></div>
 
-  <!-- Script de partículas em malha -->
+  <!-- Script de partículas -->
   <script>
     particlesJS("particles-js", {
       particles: {
