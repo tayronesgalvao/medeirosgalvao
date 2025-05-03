@@ -66,6 +66,17 @@
       z-index: 10;
     }
 
+    #truck-icon {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background-image: url('https://cdn-icons-png.flaticon.com/512/743/743007.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      z-index: 5;
+      transition: all 0.8s ease-in-out;
+    }
+
     @keyframes glow {
       0% { filter: drop-shadow(0 0 8px #00ff99); }
       50% { filter: drop-shadow(0 0 30px #00ff99); }
@@ -112,8 +123,11 @@
   <div id="svg-container"></div>
   <div class="scanner"></div>
   <div class="tooltip" id="tooltip"></div>
+  <div id="truck-icon"></div>
 
   <script>
+    const truck = document.getElementById("truck-icon");
+
     particlesJS("particles-js", {
       particles: {
         number: { value: 180, density: { enable: true, value_area: 800 } },
@@ -163,7 +177,6 @@
         const svgElement = doc.documentElement;
         const ns = "http://www.w3.org/2000/svg";
 
-        // Create and add lines between states
         const paths = doc.querySelectorAll("path");
         const positions = [];
 
@@ -171,7 +184,7 @@
           const bbox = path.getBBox();
           const cx = bbox.x + bbox.width / 2;
           const cy = bbox.y + bbox.height / 2;
-          positions.push({ cx, cy });
+          positions.push({ cx, cy, path });
         });
 
         for (let i = 0; i < positions.length; i++) {
@@ -191,7 +204,9 @@
         // Adiciona SVG diretamente ao DOM preservando elementos criados
         document.getElementById("svg-container").appendChild(svgElement);
 
-        paths.forEach(path => {
+        paths.forEach((path, index) => {
+          const { cx, cy } = positions[index];
+
           if (!path.querySelector("title") && path.id) {
             const title = document.createElementNS(ns, "title");
             title.textContent = path.id.charAt(0).toUpperCase() + path.id.slice(1);
@@ -208,7 +223,29 @@
           path.addEventListener("mouseleave", () => {
             tooltip.style.display = "none";
           });
+
+          path.addEventListener("click", () => {
+            const svgRect = svgElement.getBoundingClientRect();
+            const x = svgRect.left + (cx / svgElement.viewBox.baseVal.width) * svgRect.width;
+            const y = svgRect.top + (cy / svgElement.viewBox.baseVal.height) * svgRect.height;
+
+            truck.style.left = `${x - 15}px`;
+            truck.style.top = `${y - 15}px`;
+          });
         });
+
+        // Posiciona o caminhão inicialmente no primeiro estado
+        const first = positions[0];
+        if (first) {
+          setTimeout(() => {
+            const svgRect = svgElement.getBoundingClientRect();
+            const x = svgRect.left + (first.cx / svgElement.viewBox.baseVal.width) * svgRect.width;
+            const y = svgRect.top + (first.cy / svgElement.viewBox.baseVal.height) * svgRect.height;
+
+            truck.style.left = `${x - 15}px`;
+            truck.style.top = `${y - 15}px`;
+          }, 1000);
+        }
       });
   </script>
 
