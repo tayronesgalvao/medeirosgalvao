@@ -25,7 +25,7 @@
       justify-content: center;
       align-items: center;
       pointer-events: none;
-      opacity: 0.85; /* Transparência aplicada */
+      opacity: 0.85;
     }
 
     #svg-container svg {
@@ -157,6 +157,13 @@
 
           path.addEventListener("mouseleave", () => {
             tooltip.style.display = "none";
+          });
+
+          // 👉 Vibração no celular ao tocar
+          path.addEventListener("touchstart", () => {
+            if (navigator.vibrate) {
+              navigator.vibrate(40); // vibração de 40ms
+            }
           });
         });
       });
