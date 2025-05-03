@@ -68,13 +68,14 @@
 
     #truck-icon {
       position: absolute;
-      width: 30px;
-      height: 30px;
-      background-image: url('https://cdn-icons-png.flaticon.com/512/743/743007.png');
+      width: 40px;
+      height: 40px;
+      background-image: url('https://cdn-icons-png.flaticon.com/512/1198/1198321.png');
       background-size: contain;
       background-repeat: no-repeat;
-      z-index: 5;
-      transition: all 0.8s ease-in-out;
+      z-index: 6;
+      transition: all 0.6s ease-in-out;
+      pointer-events: none;
     }
 
     @keyframes glow {
@@ -201,7 +202,6 @@
           }
         }
 
-        // Adiciona SVG diretamente ao DOM preservando elementos criados
         document.getElementById("svg-container").appendChild(svgElement);
 
         paths.forEach((path, index) => {
@@ -229,8 +229,8 @@
             const x = svgRect.left + (cx / svgElement.viewBox.baseVal.width) * svgRect.width;
             const y = svgRect.top + (cy / svgElement.viewBox.baseVal.height) * svgRect.height;
 
-            truck.style.left = `${x - 15}px`;
-            truck.style.top = `${y - 15}px`;
+            truck.style.left = `${x - 20}px`;
+            truck.style.top = `${y - 20}px`;
           });
         });
 
@@ -242,8 +242,8 @@
             const x = svgRect.left + (first.cx / svgElement.viewBox.baseVal.width) * svgRect.width;
             const y = svgRect.top + (first.cy / svgElement.viewBox.baseVal.height) * svgRect.height;
 
-            truck.style.left = `${x - 15}px`;
-            truck.style.top = `${y - 15}px`;
+            truck.style.left = `${x - 20}px`;
+            truck.style.top = `${y - 20}px`;
           }, 1000);
         }
       });
