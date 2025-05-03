@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Mapa Nordeste - Logística Interligada</title>
-  <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
   <style>
     html, body {
       margin: 0;
@@ -72,13 +71,6 @@
       100% { filter: drop-shadow(0 0 8px #00ff99); }
     }
 
-    #particles-js {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-    }
-
     .scanner {
       position: absolute;
       top: -100%;
@@ -108,51 +100,11 @@
 </head>
 <body>
 
-  <div id="particles-js"></div>
   <div id="svg-container"></div>
   <div class="scanner"></div>
   <div class="tooltip" id="tooltip"></div>
 
   <script>
-    particlesJS("particles-js", {
-      particles: {
-        number: { value: 180, density: { enable: true, value_area: 800 } },
-        color: { value: "#66ffc2" },
-        shape: { type: "circle" },
-        opacity: { value: 0.4, random: false },
-        size: { value: 2.5, random: true },
-        line_linked: {
-          enable: true,
-          distance: 100,
-          color: "#66ffc2",
-          opacity: 0.6,
-          width: 1
-        },
-        move: {
-          enable: true,
-          speed: 1.2,
-          direction: "none",
-          random: false,
-          straight: false,
-          out_mode: "out",
-          bounce: false
-        }
-      },
-      interactivity: {
-        detect_on: "canvas",
-        events: {
-          onhover: { enable: true, mode: "grab" },
-          onclick: { enable: true, mode: "push" },
-          resize: true
-        },
-        modes: {
-          grab: { distance: 140, line_linked: { opacity: 0.9 } },
-          push: { particles_nb: 4 }
-        }
-      },
-      retina_detect: true
-    });
-
     fetch("mapa_nordeste_vetor.svg")
       .then(res => res.text())
       .then(svg => {
