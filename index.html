@@ -23,22 +23,20 @@
       align-items: center;
     }
 
-    #svg-container svg {
+    svg {
       width: 90%;
       height: auto;
       max-height: 100%;
-      pointer-events: none;
     }
 
-    #svg-container svg path {
+    path {
       fill: #013220;
       stroke: #00ff00;
       stroke-width: 1;
       transition: all 0.3s ease;
-      pointer-events: auto;
     }
 
-    #svg-container svg path:hover {
+    path:hover {
       fill: #39ff14;
       stroke: #39ff14;
       filter: drop-shadow(0 0 8px #39ff14);
@@ -61,7 +59,17 @@
 <body>
 
   <canvas id="neural-canvas"></canvas>
-  <div id="svg-container"></div>
+
+  <div id="svg-container">
+    <!-- SVG embedado diretamente no HTML -->
+    <svg viewBox="0 0 1000 1000" id="mapa">
+      <!-- Exemplo: IDs para estados -->
+      <path id="rn" d="..."/>
+      <path id="pb" d="..."/>
+      <path id="pe" d="..."/>
+      <!-- ...adicione todos os paths com IDs... -->
+    </svg>
+  </div>
 
   <script>
     const canvas = document.getElementById('neural-canvas');
@@ -73,19 +81,25 @@
     }
 
     resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      calculatePositions(); // recalcular
+    });
 
-    // Pontos representando estados (posições fictícias - ajuste conforme seu SVG real)
-    const nodes = [
-      { x: 400, y: 200 }, // RN
-      { x: 480, y: 250 }, // PB
-      { x: 550, y: 300 }, // PE
-      { x: 350, y: 300 }, // CE
-      { x: 600, y: 400 }, // AL
-      { x: 300, y: 400 }, // PI
-      { x: 650, y: 500 }, // SE
-      { x: 200, y: 500 }  // BA
-    ];
+    let nodes = [];
+
+    function calculatePositions() {
+      const svg = document.getElementById("mapa");
+      const estados = ['rn', 'pb', 'pe', 'ce', 'al', 'pi', 'se', 'ba'];
+      nodes = estados.map(id => {
+        const el = document.getElementById(id);
+        const box = el.getBoundingClientRect();
+        return {
+          x: box.left + box.width / 2,
+          y: box.top + box.height / 2
+        };
+      });
+    }
 
     const connections = [
       [0, 1], [1, 2], [2, 3], [3, 0], [0, 4],
@@ -108,7 +122,6 @@
         ctx.stroke();
       });
 
-      // Pontos visuais (opcional)
       nodes.forEach(node => {
         ctx.beginPath();
         ctx.arc(node.x, node.y, 3, 0, 2 * Math.PI);
@@ -122,14 +135,10 @@
       requestAnimationFrame(animate);
     }
 
-    animate();
-
-    // Carrega o mapa SVG
-    fetch("mapa_nordeste_vetor.svg")
-      .then(res => res.text())
-      .then(svg => {
-        document.getElementById("svg-container").innerHTML = svg;
-      });
+    window.onload = () => {
+      calculatePositions();
+      animate();
+    };
   </script>
 
 </body>
