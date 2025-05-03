@@ -32,11 +32,11 @@
       width: 90%;
       height: auto;
       max-height: 100%;
-      fill-opacity: 0.2;
+      fill-opacity: 1;
     }
 
     #svg-container svg path {
-      fill: #006400; /* verde escuro */
+      fill: #006400; /* verde escuro visível */
       stroke: #00ff00;
       stroke-width: 1.2;
       transition: all 0.3s ease-in-out;
@@ -44,18 +44,18 @@
     }
 
     #svg-container svg path:hover {
-      fill: #00ff00; /* verde neon */
-      stroke: #00ff00;
-      filter: drop-shadow(0 0 18px #00ff00);
+      fill: #00ff99; /* verde neon vivo */
+      stroke: #00ff99;
+      filter: drop-shadow(0 0 25px #00ff99);
       cursor: pointer;
-      stroke-width: 2.2;
+      stroke-width: 2;
       animation: glow 1.2s infinite ease-in-out;
     }
 
     @keyframes glow {
-      0% { filter: drop-shadow(0 0 5px #00ff00); }
-      50% { filter: drop-shadow(0 0 25px #00ff00); }
-      100% { filter: drop-shadow(0 0 5px #00ff00); }
+      0% { filter: drop-shadow(0 0 5px #00ff99); }
+      50% { filter: drop-shadow(0 0 25px #00ff99); }
+      100% { filter: drop-shadow(0 0 5px #00ff99); }
     }
 
     #particles-js {
@@ -126,7 +126,6 @@
         const parser = new DOMParser();
         const doc = parser.parseFromString(svg, "image/svg+xml");
 
-        // Adiciona tooltips com base no ID de cada path
         doc.querySelectorAll("path").forEach(path => {
           if (!path.querySelector("title") && path.id) {
             const title = doc.createElementNS("http://www.w3.org/2000/svg", "title");
